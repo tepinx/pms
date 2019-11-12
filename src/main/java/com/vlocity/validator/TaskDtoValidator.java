@@ -40,13 +40,7 @@ public class TaskDtoValidator extends AbstractValidator implements Validator {
         if (taskDepDtos != null && !taskDepDtos.isEmpty()) {
             for (TaskDto taskDepDto : taskDepDtos) {
                 Task dependencyTask = taskService.findById(taskDepDto.getId());
-                if (taskDto.getTaskStatus() == TaskStatus.IN_PROGRESS && dependencyTask != null
-                        && (dependencyTask.getTaskStatus() == TaskStatus.OPEN || dependencyTask.getTaskStatus() == TaskStatus.IN_PROGRESS)) {
-                    StringBuilder sbmsg = new StringBuilder();
-                    String errorMsg = sbmsg.append(dependencyTask.getName()).append(" ").append("is not yet completed").toString();
-                    errors.reject("ERROR_DEPENDENCY_TASK_NOT_COMPLETED", errorMsg);
-                }
-                if (taskDto.getTaskStatus() == TaskStatus.COMPLETED && dependencyTask != null
+                if ((taskDto.getTaskStatus() == TaskStatus.IN_PROGRESS || taskDto.getTaskStatus() == TaskStatus.COMPLETED) && dependencyTask != null
                         && (dependencyTask.getTaskStatus() == TaskStatus.OPEN || dependencyTask.getTaskStatus() == TaskStatus.IN_PROGRESS)) {
                     StringBuilder sbmsg = new StringBuilder();
                     String errorMsg = sbmsg.append(dependencyTask.getName()).append(" ").append("is not yet completed").toString();

@@ -1,0 +1,81 @@
+package com.vlocity.controller;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.vlocity.domain.Role;
+import com.vlocity.domain.User;
+import com.vlocity.dto.RoleDto;
+import com.vlocity.repository.RoleRepository;
+import com.vlocity.response.ApiResponse;
+import com.vlocity.service.RoleService;
+
+@CrossOrigin(origins = "*", maxAge = 3600)
+@RestController
+@RequestMapping("/roles")
+public class RoleRestController {
+
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @GetMapping("/list")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<List<User>> list() {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Role list fetched successfully.", roleService.findAll());
+    }
+
+    @GetMapping("/paginated")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Page<Role>> paginated(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("sort") String sort,
+            @RequestParam("sortBy") String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy));
+        return new ApiResponse<>(HttpStatus.OK.value(), "Role list fetched successfully.", roleRepository.findAll(pageable));
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Role> getOne(@PathVariable Long id) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Role fetched successfully.", roleService.findById(id));
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Role> save(@Valid @RequestBody RoleDto roleDto) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Role saved successfully.", roleService.save(roleDto));
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Role> update(@Valid @RequestBody RoleDto roleDto) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Role updated successfully.", roleService.update(roleDto));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Void> delete(@PathVariable Long id) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Role fetched successfully.", roleService.delete(id));
+    }
+
+}

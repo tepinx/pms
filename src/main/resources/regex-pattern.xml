@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd" >
+<beans>
+    <bean id="regexPatternHandler" class="com.vlocity.util.RegexPatternHandler">
+        <property name="regexpattern">
+            <map>
+                <entry>
+                    <key>
+                        <value>username</value>	
+                    </key>
+                   <value>^[\w]{1,20}$</value>
+                </entry>
+            </map>
+        </property>
+    </bean>
+</beans>
